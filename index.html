@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        height: 400px;
+        width: 600px;
+        background-color: #5b5b5b;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: solid #ff8514;
+        flex-wrap: wrap;
+      }
+
+      .button-wrapper {
+        margin: 20px;
+        height: 150px;
+        width: 150px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .button {
+        height: 100%;
+        width: 100%;
+        background: #373737;
+        border: solid #373737;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .button:hover {
+        cursor: pointer;
+      }
+
+      .active {
+        border: solid #ff8514;
+      }
+
+      img {
+        filter: invert(1);
+        height: 60px;
+        width: 60px;
+        user-select: none;
+      }
+
+      p {
+        font-weight: 400;
+        font-size: medium;
+        color: white;
+        margin: 13px;
+        user-select: none;
+      }
+
+      .sub-buttons {
+        position: absolute;
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-end;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .radio__input {
+        display: none;
+      }
+
+      .radio__label {
+        box-sizing: border-box;
+        padding: 11px 11px;
+        font-size: 15px;
+        cursor: pointer;
+        pointer-events: auto;
+        margin-top: 118px;
+        margin-left: 10px;
+        margin-right: 10px;
+        height: 25px;
+        width: 25px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: solid #373737;
+        border-radius: 7px;
+        background: #525252;
+        user-select: none;
+      }
+
+      .radio__label:hover {
+        background: lightgrey;
+      }
+
+      .radio__input:checked + .radio__label {
+        border: solid #ff8514;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="button-wrapper">
+      <div id="dictionary" class="button">
+        <img src="img_assets/book-half.svg" alt="" />
+        <p>Dictionary</p>
+      </div>
+    </div>
+
+    <div class="button-wrapper">
+      <div id="screen-reader" class="button">
+        <img src="img_assets/soundwave.svg" alt="" />
+        <p>Screen Reader</p>
+      </div>
+      <div class="sub-buttons">
+        <input
+          class="radio__input radio_screen_reader"
+          type="radio"
+          value="slow"
+          name="reader-set"
+          id="slow"
+        />
+        <label class="radio__label" for="slow">S</label>
+
+        <input
+          class="radio__input radio_screen_reader"
+          type="radio"
+          value="med"
+          name="reader-set"
+          id="medium"
+        />
+        <label class="radio__label" for="medium">M</label>
+
+        <input
+          class="radio__input radio_screen_reader"
+          type="radio"
+          value="fast"
+          name="reader-set"
+          id="fast"
+        />
+        <label class="radio__label" for="fast">F</label>
+
+        <!-- <button id="slow-speed">S</button>
+            <button id="med-speed">M</button>
+            <button id="fast-speed">F</button> -->
+      </div>
+    </div>
+
+    <div class="button-wrapper">
+      <div id="page-structure" class="button">
+        <img src="img_assets/layout-text-window-reverse.svg" alt="" />
+        <p>Page Structure</p>
+      </div>
+    </div>
+
+    <div class="button-wrapper">
+      <div id="text-size" class="button">
+        <img src="img_assets/fonts.svg" alt="" />
+        <p>Text Size</p>
+      </div>
+      <div class="sub-buttons">
+        <input
+          class="radio__input"
+          type="radio"
+          value="small"
+          name="text-size-set"
+          id="small-1"
+        />
+        <label class="radio__label" for="small-1">S</label>
+
+        <input
+          class="radio__input"
+          type="radio"
+          value="med"
+          name="text-size-set"
+          id="medium-1"
+        />
+        <label class="radio__label" for="medium-1">M</label>
+
+        <input
+          class="radio__input"
+          type="radio"
+          value="large"
+          name="text-size-set"
+          id="large-1"
+        />
+        <label class="radio__label" for="large-1">L</label>
+      </div>
+    </div>
+
+    <div class="button-wrapper">
+      <div id="line-height" class="button">
+        <img src="img_assets/arrows-expand.svg" alt="" />
+        <p>Line Height</p>
+      </div>
+      <div class="sub-buttons">
+        <input
+          class="radio__input"
+          type="radio"
+          value="small"
+          name="line-height-set"
+          id="small-2"
+        />
+        <label class="radio__label" for="small-2">S</label>
+
+        <input
+          class="radio__input"
+          type="radio"
+          value="med"
+          name="line-height-set"
+          id="medium-2"
+        />
+        <label class="radio__label" for="medium-2">M</label>
+
+        <input
+          class="radio__input"
+          type="radio"
+          value="large"
+          name="line-height-set"
+          id="large-2"
+        />
+        <label class="radio__label" for="large-2">L</label>
+      </div>
+    </div>
+
+    <div class="button-wrapper">
+      <div id="word-spacing" class="button">
+        <img src="img_assets/distribute-horizontal.svg" alt="" />
+        <p>Word Spacing</p>
+      </div>
+
+      <div class="sub-buttons">
+        <input
+          class="radio__input"
+          type="radio"
+          value="small"
+          name="spacing-set"
+          id="small-3"
+        />
+        <label class="radio__label" for="small-3">S</label>
+
+        <input
+          class="radio__input"
+          type="radio"
+          value="med"
+          name="spacing-set"
+          id="medium-3"
+        />
+        <label class="radio__label" for="medium-3">M</label>
+
+        <input
+          class="radio__input"
+          type="radio"
+          value="large"
+          name="spacing-set"
+          id="large-3"
+        />
+        <label class="radio__label" for="large-3">L</label>
+      </div>
+    </div>
+    <div class="modal"></div>
+  </body>
+  <script src="popup.js"></script>
+</html>
