@@ -1,4 +1,4 @@
-console.log("~ Popup script Loaded ~");
+console.log("~ Popup Script Loaded ~");
 
 // // Clear all storage:
 // chrome.storage.local.clear().then(() => {

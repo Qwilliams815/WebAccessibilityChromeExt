@@ -1,9 +1,5 @@
 console.log("~ Content Script Loaded ~");
 
-// chrome.storage.local.get(null).then((result) => {
-// 	console.log(result);
-// });
-
 // Gather all necessary web page elements
 let bodyElements = document.body.getElementsByTagName("*");
 let headers = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6"));

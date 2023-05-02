@@ -1,4 +1,4 @@
-console.log("New Message from Background Script!");
+console.log("~ Background Script Loaded! ~");
 
 // Sends tab id to content script on page load
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
