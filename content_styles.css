@@ -1,101 +1,22 @@
-/* body {
-    font-size: 30px;
-} */
-
-#ext-structure-modal {
-  width: 500px;
+/* Dictionary tooltip styles */
+#tooltipDiv {
+  background: #ccc !important;
+  border: solid !important;
+  height: auto !important;
+  width: 300px !important;
+  padding: 10px !important;
 }
 
-#ext-structure-modal h1,
-#ext-structure-modal p,
-#ext-structure-modal a {
-  font-family: sans-serif;
+#tooltipDiv h1, p, a {
+  font-family: Arial, Helvetica, sans-serif !important;
 }
 
-#ext-structure-modal h1,
-#ext-structure-modal p {
-  color: black !important;
+#tooltipDiv h1 {
+  margin: 0px !important;
+  padding-bottom: 15px;
 }
 
-#ext-structure-modal h1 {
-  font-size: 30px;
-  padding: 20px;
-}
-
-#ext-structure-modal p {
-  margin: 10px;
-}
-
-#ext-structure-modal a {
-  color: #0000ee;
-}
-
-.accordion,
-.has-drop,
-.close-modal-btn {
-  background-color: #eee;
-  color: #444;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  text-align: left;
-  border: none;
-  outline: none;
-  transition: 0.4s;
-  align-items: center;
-  text-overflow: ellipsis;
-
-  /* border: solid; */
-}
-
-.accordion {
-  display: flex;
-  justify-content: space-between;
-}
-
-.has-dropdown:after {
-  content: "\02795";
-  /* Unicode character for "plus" sign (+) */
-  font-size: 13px;
-  color: #777;
-  float: right;
-}
-
-.active-acc,
-.has-dropdown:hover,
-.close-modal-btn:hover {
-  background-color: #ccc;
-}
-
-.active-acc:after {
-  content: "\2796";
-  /* Unicode character for "minus" sign (-) */
-}
-
-.dropdown {
-  padding: 0 18px;
-  background-color: white;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.2s ease-out;
-}
-
-.close-modal-btn {
-  font-family: inherit;
-  text-align: center;
-  border: solid;
-  margin-top: 15px;
-}
-
-.text-width-limit {
-  width: 295px;
-}
-
-.header-link-ext:hover {
-  text-decoration: underline;
-}
-
-.header-link-ext {
-  position: absolute;
-  right: 100px;
+#tooltipDiv a {
+  position: relative !important;
+  left: 250px !important;
 }

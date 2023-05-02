@@ -1,12 +1,40 @@
-// This is all the js logic for the extension popup window
-console.log("New message from Popup.js!")
+console.log("~ Popup script Loaded ~");
 
+// // Clear all storage:
+// chrome.storage.local.clear().then(() => {
+// 	console.log("Storage cleared");
+// });
 
-// const test_btn = document.getElementById("test_btn");
+// Get all storage:
+// chrome.storage.local.get(null).then((result) => {
+// 	console.log(result);
+// });
 
-// test_btn.addEventListener("click", (e) => {
-//     console.log("test!~")
-// })
+// All widget user settings are saved to local storage as a single key value pair per tab:
+// key = current tab id, value = object with each saved setting representing a new object property.
+async function loadPreferencesFromStorage() {
+	return new Promise((resolve, reject) => {
+		chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+			const tabId = tabs[0].id;
+			chrome.storage.local.get([tabId.toString()], (result) => {
+				resolve(result[tabs[0].id]);
+			});
+		});
+	});
+}
+
+// Toggles the "active" class, does not update storage.
+function toggleBtnActive(btn) {
+	btn.classList.toggle("active");
+	return btn.classList.toString().includes("active");
+}
+
+// Used for sending info to contentScript.js
+function sendContentMessage(id, value) {
+	chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+		chrome.tabs.sendMessage(tabs[0].id, { id: id, status: value });
+	});
+}
 
 // Gather all necessary buttons and elements
 const screen_reader_btn = document.getElementById("screen-reader");
@@ -17,190 +45,183 @@ const line_height_btn = document.getElementById("line-height");
 const word_spacing_btn = document.getElementById("word-spacing");
 
 let buttons = Array.from(document.getElementsByClassName("button"));
-let radio = Array.from(document.getElementsByTagName("input"));
+let radios = Array.from(document.getElementsByTagName("input"));
+let savedPreferences;
 
+// Updating data via the chrome storage api is asynchronous, so everything
+// that uses the updateStorage function needs to be contained within
+// the data retrieving promise loadPreferencesFromStorage scope.
+loadPreferencesFromStorage().then((result) => {
+	// Used to add user settings to local storage
+	function updateStorage(id, value) {
+		chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+			savedPreferences[id] = value;
+			chrome.storage.local.set({ [tabs[0].id]: savedPreferences }).then((res) => {
+				console.log("storage updated: ", res);
+			});
+		});
+	}
 
-// let html = document.getElementsByTagName("html");
-// console.log(html);
+	savedPreferences = result;
 
-// Highlights active buttons/tools
-function toggleBtnActive(btn) {
-    btn.classList.toggle("active");
-    console.log("hello again");
-};
+	if (!savedPreferences) {
+		savedPreferences = {};
+	}
 
-// if radio button is clicked, activate its larger button container
+	// for (let preference of Object.keys(savedPreferences)) {
+	// 	sendContentMessage(preference, savedPreferences[preference]);
+	// 	// console.log(preference, savedPreferences[preference]);
+	// }
 
+	// Check for widget activations
+	for (let btn of buttons) {
+		// Get any existing active buttons from local storage
+		if (savedPreferences[btn.id] == "active") {
+			console.log(savedPreferences[btn.id]);
+			// All btns are inactive by default whenever the popup is opened.
+			toggleBtnActive(btn);
+		}
 
-// Check for big button activations
-for (let btn of buttons) {
-    btn.addEventListener("click", (e) => {
-        // btn.classList.toggle("active")
-        if (btn.id == "text-size") {
-            console.log("text-btn pressed")
-            chrome.tabs.setZoom(1);
-        }
+		btn.addEventListener("click", () => {
+			if (toggleBtnActive(btn)) {
+				updateStorage(btn.id, "active");
 
-        if (btn.classList.toString().includes("active")) {
-            // let localSubBtns = Array.from()
-            console.log("new active button");
-            let button_sibling = btn.nextElementSibling;
-            if (button_sibling != null) {
-                let subBtns = Array.from(button_sibling.childNodes);
-                console.log(subBtns);
-                for (let SBtn of subBtns) {
-                    SBtn.checked = false;
-                }
-            }
-        } 
-        // Revert zoom effect back to default
-            
-            toggleBtnActive(btn);
-            
-    })
-};
+				if (btn.id == "text-size") {
+					chrome.tabs.setZoom(1);
+				}
 
-for (let rad of radio) {
-    rad.addEventListener("change", e => {
-        rad.parentNode.previousElementSibling.classList.add("active");
-      
-    })
-};
+				// Page structure button closes the popup on click so it will never stay "active"
+				if (btn.id == "page-structure") {
+					btn.classList.remove("active");
+					updateStorage(btn.id, "inactive");
+				}
 
-function changeTextSize() {
+				if (btn.id == "dictionary") {
+					sendContentMessage("dictionary", "active");
+				}
 
-    console.log("text size btn clicked");
+				if (btn.id == "screen-reader") {
+					sendContentMessage("screen-reader", "active");
+				}
+			} else {
+				// Deactivate button
+				updateStorage(btn.id, "inactive");
 
-    function getTabs(tabs) {
-        console.log(tabs);
-        console.log(tabs[0].id);
-        let message = {txt: "hello from popup!"};
-        chrome.tabs.sendMessage(tabs[0].id, "hello content! This is my message");
-    }
+				if (btn.id == "dictionary" || btn.id == "screen-reader") {
+					sendContentMessage(btn.id, "inactive");
+				}
 
-    let queryOptions = { active: true, lastFocusedWindow: true, currentWindow: true };
-    chrome.tabs.query(queryOptions, getTabs)
+				// Deactivate subsequent radios buttons
+				try {
+					// Have to use try/catch here because just running btn.nextElementSibling
+					// will throw an error if the button doesn't have radios buttons.
+					for (let sub of Array.from(btn.nextElementSibling.childNodes)) {
+						sub.checked = false;
+						console.log(sub["name"]);
+						updateStorage(sub.id, "inactive");
+					}
+				} catch (err) {
+					console.log(err);
+				}
+			}
+		});
+	}
 
+	for (let rad of radios) {
+		if (savedPreferences[rad.id] == "active") {
+			rad.checked = true;
+		}
+
+		rad.addEventListener("change", () => {
+			rad.parentNode.previousElementSibling.classList.add("active");
+			updateStorage(rad.parentNode.previousElementSibling.id, "active");
+			sendContentMessage(rad.parentNode.previousElementSibling.id, "active");
+			updateStorage(rad.id, "active");
+			for (let rad2 of radios) {
+				if (rad2.checked != true) {
+					updateStorage(rad2.id, "inactive");
+				}
+			}
+		});
+	}
+
+	// Line Height Handlers
+	function sendLineHeight(height) {
+		updateStorage("line-height-value", height);
+		sendContentMessage("line-height-value", height);
+	}
+
+	line_height_btn.addEventListener("click", () => {
+		sendLineHeight("1rem");
+	});
+
+	const line_height_radios = document.querySelectorAll(
+		'input[name="line-height-set"]'
+	);
+
+	for (let rad of line_height_radios) {
+		rad.addEventListener("click", () => {
+			sendLineHeight(rad.dataset.height);
+		});
+	}
+
+	// Word Spacing Handlers
+	function sendWordSpace(space) {
+		updateStorage("word-spacing-value", space);
+		sendContentMessage("word-spacing-value", space);
+	}
+
+	word_spacing_btn.addEventListener("click", () => {
+		sendWordSpace("0rem");
+	});
+
+	const word_space_radios = document.querySelectorAll(
+		'input[name="spacing-set"]'
+	);
+
+	for (let rad of word_space_radios) {
+		rad.addEventListener("click", () => {
+			sendWordSpace(rad.dataset.space);
+		});
+	}
+
+	// Screen Reader Handlers
+	function sendSpeekSpeed(speed) {
+		updateStorage("screen-reader-value", speed);
+		sendContentMessage("screen-reader-value", speed);
+	}
+
+	const screen_reader_radios = document.querySelectorAll(
+		'input[name="reader-set"]'
+	);
+
+	for (let rad of screen_reader_radios) {
+		rad.addEventListener("click", () => {
+			sendSpeekSpeed(rad.dataset.speed);
+		});
+	}
+});
+
+// Text Size Handlers
+text_size_btn.addEventListener("click", () => {
+	chrome.tabs.setZoom(1);
+});
+
+const text_size_radios = document.querySelectorAll(
+	'input[name="text-size-set"]'
+);
+for (let rad of text_size_radios) {
+	rad.addEventListener("click", () => {
+		chrome.tabs.setZoom(Number(rad.dataset.zoom));
+	});
 }
 
-
-// Text size sub button handlers
-const small_text = document.getElementById("small-1");
-const med_text = document.getElementById("medium-1");
-const lg_text = document.getElementById("large-1");
-
-small_text.addEventListener("click", e => {
-    chrome.tabs.setZoom(1);
-})
-
-med_text.addEventListener("click", e => {
-    chrome.tabs.setZoom(1.75);
-})
-
-lg_text.addEventListener("click", e => {
-    chrome.tabs.setZoom(2.5);
-})
-
-
-// function changeTextColor() {
-
-//     console.log("text color btn clicked");
-
-//     // getTabs callback function for chrome.tabs.query
-//     function getTabs(tabs) {
-//         console.log(tabs);
-//         console.log(tabs[0].id);
-//         chrome.tabs.setZoom(3);
-//         // chrome.tabs.sendMessage(tabs[0].id, "40px");
-//         //125, 175, 250
-//     }
-
-//     let queryOptions = { active: true, lastFocusedWindow: true, currentWindow: true };
-//     chrome.tabs.query(queryOptions, getTabs);
-
-// }
-
-
-// SEND MESSAGE FROM EXT TO CONTENT SCRIPT
-function test_message () {
-
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, "This is a new message!!!!");
-      });
-}
-
-test_message();
-
-
-
-
-//text_size_btn.addEventListener("click", e => {changeTextColor()});
-text_size_btn.addEventListener("click", e => {chrome.tabs.setZoom(1)});
-line_height_btn.addEventListener("click", e => {sendLineHeight("1rem")});
-
-// Line height sub button handlers
-const small_height = document.getElementById("small-2");
-const med_height = document.getElementById("medium-2");
-const lg_height = document.getElementById("large-2");
-
-function sendLineHeight(height) {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {"role": "line-height", "value": height});
-      })
-}
-
-small_height.addEventListener("click", e => {sendLineHeight("1rem")});
-med_height.addEventListener("click", e => {sendLineHeight("3rem")});
-lg_height.addEventListener("click", e => {sendLineHeight("5rem")});
-
-// Word Spacing Handlers
-word_spacing_btn.addEventListener("click", e => {sendWordSpace("0rem")});
-
-function sendWordSpace(space) {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {"role": "word-spacing", "value": space});
-      })
-}
-
-const small_space = document.getElementById("small-3");
-const med_space = document.getElementById("medium-3");
-const lg_space = document.getElementById("large-3");
-
-small_space.addEventListener("click", e => {sendWordSpace("0rem")});
-med_space.addEventListener("click", e => {sendWordSpace(".5rem")});
-lg_space.addEventListener("click", e => {sendWordSpace("1rem")});
-
-// Page structure Handler
+// Page Structure Handler
 function launchPageStructModal() {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {"role": "page-struct", "value": null});
-      })
+	sendContentMessage("page-struct", null);
 }
 
-
-// text_size_btn.addEventListener("click", async function() {
-//     console.log("text size btn clicked")
-
-//     // send message command to change text-size of current webpage
-//     // if (getCurrentTab() != undefined) {
-//     //     console.log(typeof(getCurrentTab().id));
-//     //     chrome.tabs.sendMessage(getCurrentTab().id, "Message from popup to content page!")
-//     // }
-//     //let tab = await getCurrentTab()
-//     //console.log(tab);
-//     console.log(getCurrentTab());
-//     console.log(getCurrentTab.then);
-//     getCurrentTab.then(value => {
-//         console.log(value.id);
-//     })
-//     //chrome.tabs.sendMessage(tab.id, "Message from popup to content page!")
-// });
-
-
-// screen_reader_btn.addEventListener("click",);
-// dictionary_btn.addEventListener("click",);
-page_struct_btn.addEventListener("click", e => {
-    console.log("page struct button pressed");
-    launchPageStructModal();
-    window.close();
+page_struct_btn.addEventListener("click", () => {
+	launchPageStructModal();
+	window.close();
 });

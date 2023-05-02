@@ -1,10 +1,13 @@
 {
-  "name": "chrome.tabs testing",
+  "name": "Web Helper",
   "version": "1.0.0",
   "manifest_version": 3,
-  "author": "Brian Williams",
+  "author": "brianandwilliams.com",
+  "icons": { "16": "icon_assets/WebLogo128.png",
+           "48": "icon_assets/WebLogo48.png",
+          "128": "icon_assets/WebLogo128.png" },
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "popup.html"
   },
   "content_scripts": [
     {
@@ -16,5 +19,5 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["tabs", "activeTab"]
+  "permissions": ["tabs", "activeTab", "storage"]
 }

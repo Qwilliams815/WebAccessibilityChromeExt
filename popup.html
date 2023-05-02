@@ -5,110 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <style>
-      * {
-        padding: 0;
-        margin: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        height: 400px;
-        width: 600px;
-        background-color: #5b5b5b;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border: solid #ff8514;
-        flex-wrap: wrap;
-      }
-
-      .button-wrapper {
-        margin: 20px;
-        height: 150px;
-        width: 150px;
-        display: flex;
-        justify-content: center;
-      }
-
-      .button {
-        height: 100%;
-        width: 100%;
-        background: #373737;
-        border: solid #373737;
-        border-radius: 15px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
-
-      .button:hover {
-        cursor: pointer;
-      }
-
-      .active {
-        border: solid #ff8514;
-      }
-
-      img {
-        filter: invert(1);
-        height: 60px;
-        width: 60px;
-        user-select: none;
-      }
-
-      p {
-        font-weight: 400;
-        font-size: medium;
-        color: white;
-        margin: 13px;
-        user-select: none;
-      }
-
-      .sub-buttons {
-        position: absolute;
-        display: flex;
-        justify-content: space-around;
-        align-items: flex-end;
-        pointer-events: none;
-        overflow: hidden;
-      }
-
-      .radio__input {
-        display: none;
-      }
-
-      .radio__label {
-        box-sizing: border-box;
-        padding: 11px 11px;
-        font-size: 15px;
-        cursor: pointer;
-        pointer-events: auto;
-        margin-top: 118px;
-        margin-left: 10px;
-        margin-right: 10px;
-        height: 25px;
-        width: 25px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        border: solid #373737;
-        border-radius: 7px;
-        background: #525252;
-        user-select: none;
-      }
-
-      .radio__label:hover {
-        background: lightgrey;
-      }
-
-      .radio__input:checked + .radio__label {
-        border: solid #ff8514;
-      }
-    </style>
+    <link rel="stylesheet" href="popup_styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   </head>
 
   <body>
@@ -131,6 +31,7 @@
           value="slow"
           name="reader-set"
           id="slow"
+          data-speed="0.5"
         />
         <label class="radio__label" for="slow">S</label>
 
@@ -140,6 +41,7 @@
           value="med"
           name="reader-set"
           id="medium"
+          data-speed="1"
         />
         <label class="radio__label" for="medium">M</label>
 
@@ -149,6 +51,7 @@
           value="fast"
           name="reader-set"
           id="fast"
+          data-speed="3"
         />
         <label class="radio__label" for="fast">F</label>
 
@@ -177,6 +80,7 @@
           value="small"
           name="text-size-set"
           id="small-1"
+          data-zoom="1"
         />
         <label class="radio__label" for="small-1">S</label>
 
@@ -186,6 +90,7 @@
           value="med"
           name="text-size-set"
           id="medium-1"
+          data-zoom="1.75"
         />
         <label class="radio__label" for="medium-1">M</label>
 
@@ -195,6 +100,7 @@
           value="large"
           name="text-size-set"
           id="large-1"
+          data-zoom="2.5"
         />
         <label class="radio__label" for="large-1">L</label>
       </div>
@@ -212,6 +118,7 @@
           value="small"
           name="line-height-set"
           id="small-2"
+          data-height = "1rem"
         />
         <label class="radio__label" for="small-2">S</label>
 
@@ -221,6 +128,7 @@
           value="med"
           name="line-height-set"
           id="medium-2"
+          data-height = "3rem"
         />
         <label class="radio__label" for="medium-2">M</label>
 
@@ -230,6 +138,7 @@
           value="large"
           name="line-height-set"
           id="large-2"
+          data-height = "5rem"
         />
         <label class="radio__label" for="large-2">L</label>
       </div>
@@ -248,6 +157,7 @@
           value="small"
           name="spacing-set"
           id="small-3"
+          data-space="0rem"
         />
         <label class="radio__label" for="small-3">S</label>
 
@@ -257,6 +167,7 @@
           value="med"
           name="spacing-set"
           id="medium-3"
+          data-space=".5rem"
         />
         <label class="radio__label" for="medium-3">M</label>
 
@@ -266,6 +177,7 @@
           value="large"
           name="spacing-set"
           id="large-3"
+          data-space="1rem"
         />
         <label class="radio__label" for="large-3">L</label>
       </div>
